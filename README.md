@@ -11,7 +11,7 @@
 ![enter image description here](https://refactoring.guru/images/patterns/content/factory-method/factory-method-2x.png)
 
 *Простой пример:* 
-```
+```swift
 protocol Transport {
     func deliver()
 }
@@ -56,7 +56,7 @@ transport[1].deliver()
 ```
 
 *Сложный пример*: 
-```
+```swift
 protocol Transport {
     func deliver()
 }
