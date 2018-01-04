@@ -18,7 +18,7 @@ protocol Transport {
 
 class Truck: Transport {
     func deliver() {
-        // ..
+        // ...
     }
 }
 
@@ -63,7 +63,7 @@ protocol Transport {
 
 class Truck: Transport {
     func deliver() {
-        // ..
+        // ...
     }
 }
 
