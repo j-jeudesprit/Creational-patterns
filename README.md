@@ -3,8 +3,7 @@
 Порождающие паттерны проектирования
 ===================
 
-Фабричный метод
-Factory Method
+Фабричный метод Factory Method
 -------------
 
 **Фабричный метод** — это порождающий паттерн проектирования, который определяет общий интерфейс для создания объектов в суперклассе, позволяя подклассам изменять тип создаваемых объектов.
@@ -128,5 +127,63 @@ transports[1].getType() // Ship
 
 *Использование шаблонов, чтобы не порождать подклассы*:
 ```swift
+// #####################
 
+protocol Transport {
+    func getType()
+}
+
+// #####################
+class Truck: Transport {
+    func getType() {
+        print("Truck")
+    }
+}
+
+class Ship: Transport {
+    func getType() {
+        print("Ship")
+    }
+}
+
+// #####################
+
+protocol Logistics {
+    // фабричный метод
+    func createTransport() -> Transport?
+
+    // Остальная функциональщина ...
+}
+
+// #####################
+
+func ~= (lhs: Transport.Type, rhs: Transport.Type) -> Bool {
+    return lhs == rhs ? true : false
+}
+
+// #####################
+
+class TransportLogistics<Item: Transport>: Logistics {
+    func createTransport() -> Transport? {
+        switch Item.self {
+        case Ship.self: return Ship()
+        case Truck.self: return Truck()
+        default: return nil
+        }
+    }
+}
+
+// #####################
+// Main
+
+var logistics: [Logistics] = [
+    TransportLogistics<Truck>(),
+    TransportLogistics<Ship>(),
+]
+
+var transports = [Transport]()
+for logistic in logistics {
+    transports.append(logistic.createTransport()!)
+    transports.last?.getType() // Truck, Ship
+}
 ```
