@@ -12,47 +12,89 @@
 
 *Простой пример:* 
 ```swift
+// #####################
+
 protocol Transport {
-    func deliver()
+    func getType()
 }
 
 class Truck: Transport {
-    func deliver() {
-        // ...
+    func getType() {
+        print("Truck")
     }
 }
 
 class Ship: Transport {
-    func deliver() {
-        // ...
+    func getType() {
+        print("Ship")
     }
 }
 
-class Logistics {
-    static func createTransport(_ type: Types) -> Transport {
-        switch type {
-        case .truck: return Truck()
-        case .ship: return Ship()
-        }
-    }
+// #####################
 
-    func planDelivery() {
-        // ...
-    }
+protocol Logistics {
+    // Фабричный метод
+    func createTransport() -> Transport
 
-    enum Types {
-        case truck
-        case ship
+    // Остальная функциональщина ...
+}
+
+class RoadLogistics: Logistics {
+    func createTransport() -> Transport {
+        return Truck()
     }
 }
 
+class SeaLogistics: Logistics {
+    func createTransport() -> Transport {
+        return Ship()
+    }
+}
+
+// #####################
 // Main
 
-var transport = [Transport]()
-transport.append(Logistics.createTransport(.truck))
-transport.append(Logistics.createTransport(.ship))
-transport[0].deliver()
-transport[1].deliver()
+var logistics: [Logistics] = [
+    RoadLogistics(),
+    SeaLogistics(),
+]
+
+var transports = [Transport]()
+for logistic in logistics {
+    transports.append(logistic.createTransport())
+    transports.last?.getType() // Truck, Ship
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 
 *Сложный пример*: 
