@@ -4,13 +4,14 @@
 ===================
 
 Фабричный метод
+Factory Method
 -------------
 
 **Фабричный метод** — это порождающий паттерн проектирования, который определяет общий интерфейс для создания объектов в суперклассе, позволяя подклассам изменять тип создаваемых объектов.
 
 ![enter image description here](https://refactoring.guru/images/patterns/content/factory-method/factory-method-2x.png)
 
-*Простой пример:* 
+*Классический пример:* 
 ```swift
 // #####################
 
@@ -64,90 +65,68 @@ for logistic in logistics {
     transports.append(logistic.createTransport())
     transports.last?.getType() // Truck, Ship
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```
 
-*Сложный пример*: 
+*Параметризованные фабричные методы*: 
 ```swift
+// #####################
+
 protocol Transport {
-    func deliver()
+    func getType()
 }
 
 class Truck: Transport {
-    func deliver() {
-        // ...
+    func getType() {
+        print("Truck")
     }
 }
 
 class Ship: Transport {
-    func deliver() {
-        // ...
+    func getType() {
+        print("Ship")
     }
 }
 
+enum Types {
+    case truck
+    case ship
+}
+
+// #####################
 
 protocol Logistics {
-    func createTransport() -> Transport
+    // Параметризированный фабричный метод
+    func createTransport(_ type: Types) -> Transport
+
+    // Остальная функциональщина ...
 }
 
-extension Logistics {
-    func planDelivery() {
-        // ...
+class TransportLogistics: Logistics {
+    func createTransport(_ type: Types) -> Transport {
+        switch type {
+        case .truck: return Truck()
+        case .ship: return Ship()
+        }
     }
 }
 
 
-class RoadLogistics: Logistics {
-    func createTransport() -> Transport {
-        return Truck()
-    }
-}
-
-class SeaLogistics: Logistics {
-    func createTransport() -> Transport {
-        return Ship()
-    }
-}
-
+// #####################
 // Main
-var logistics = [Logistics]()
-logistics.append(RoadLogistics())
-logistics.append(SeaLogistics())
+
+var logistics: [Logistics] = [
+    TransportLogistics(),
+    TransportLogistics(),
+]
 
 var transports = [Transport]()
-for logistic in logistics {
-    transports.append(logistic.createTransport())
-    logistic.planDelivery()
-}
+transports.append(logistics[0].createTransport(.truck))
+transports.append(logistics[1].createTransport(.ship))
+transports[0].getType() // Truck
+transports[1].getType() // Ship
+```
+
+*Использование шаблонов, чтобы не порождать подклассы*:
+```swift
 
 ```
