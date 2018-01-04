@@ -189,3 +189,93 @@ for logistic in logistics {
     transports.last?.getType() // Truck, Ship
 }
 ```
+
+*Клиенты тоже могут применять фабричные методы в обход создания отдельных фабрик, особенно при наличии параллельных иерархий классов*:
+```swift
+// #####################
+
+protocol Manipulator {
+    func move()
+    func drag()
+    func click()
+
+    func getType()
+}
+
+protocol Figure {
+    // Фабричный метод
+    func createManipulator() -> Manipulator
+
+     // Остальная функциональщина ...
+}
+
+// #####################
+
+class CircleManipulator: Manipulator {
+    func move() {
+        // ...
+    }
+
+    func drag() {
+        // ...
+    }
+
+    func click() {
+        // ...
+    }
+
+    func getType() {
+        print("Circle Manipulator")
+    }
+}
+
+class Circle: Figure {
+    func createManipulator() -> Manipulator {
+        return CircleManipulator()
+    }
+
+    // Остальная функциональщина ...
+}
+
+class RectangleManipulator: Manipulator {
+    func move() {
+        // ...
+    }
+
+    func drag() {
+        // ...
+    }
+
+    func click() {
+        // ...
+    }
+
+    func getType() {
+        print("Rectangle Manipulator")
+    }
+}
+
+class Rectangle: Figure {
+    func createManipulator() -> Manipulator {
+        return RectangleManipulator()
+    }
+
+    // Остальная функциональщина ...
+}
+
+// #####################
+// Main
+
+var figures: [Figure] = [
+    Circle(),
+    Rectangle(),
+]
+
+var manipulators = [Manipulator]()
+for figure in figures {
+    manipulators.append(figure.createManipulator())
+    manipulators.last?.click()
+    manipulators.last?.drag()
+    manipulators.last?.getType() // Circle Manipulator, Rectangle Manipulator
+}
+```
