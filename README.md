@@ -531,3 +531,74 @@ let director = Director(builder: builder)
 director.make(.big)
 builder.result // big Product1
 ```
+
+Прототип
+-------------
+Prototype
+-------------
+
+**Прототип** — это порождающий паттерн проектирования, который позволяет копировать объекты, не вдаваясь в подробности их реализации.
+
+![enter image description here](https://refactoring.guru/images/patterns/content/prototype/prototype-2x.png)
+
+*Пример:* 
+```swift
+// #####################
+
+protocol Clonable {
+    func clone() -> Self
+}
+
+// #####################
+
+class Prototype: Clonable {
+    var smth1: String = "Hello, "
+
+    init() { }
+
+    required init(prototype: Prototype) {
+        smth1 = prototype.smth1
+    }
+
+    func clone() -> Self {
+        return type(of: self).init(prototype: self)
+    }
+
+    // ...
+}
+
+class SubPrototype: Prototype {
+    var smth2: String = "World!"
+
+    override init() {
+        super.init()
+    }
+
+    required init(prototype: Prototype) {
+        fatalError("\(#function) has not been implemented")
+    }
+
+    required init(subprototype: SubPrototype) {
+        smth2 = subprototype.smth2
+        super.init(prototype: subprototype)
+    }
+
+    override func clone() -> Self {
+        return type(of: self).init(subprototype: self)
+    }
+
+    // ...
+}
+
+// #####################
+// Main
+
+let proto = Prototype()
+let clone1 = proto.clone()
+clone1.smth1 // Hello,
+
+let subproto = SubPrototype()
+let clone2 = subproto.clone()
+clone2.smth1 // Hello,
+clone2.smth2 // World!
+```
