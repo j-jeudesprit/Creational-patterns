@@ -602,3 +602,23 @@ let clone2 = subproto.clone()
 clone2.smth1 // Hello,
 clone2.smth2 // World!
 ```
+
+Одиночка
+-------------
+Singleton
+-------------
+
+**Одиночка** — это порождающий паттерн проектирования, который гарантирует, что у класса есть только один экземпляр, и предоставляет к нему глобальную точку доступа.
+
+![enter image description here](https://refactoring.guru/images/patterns/content/singleton/singleton-2x.png)
+
+*Пример:*
+```swift
+// #####################
+
+class Singleton {
+    static let shared = Singleton()
+
+    private init() { }
+}
+```
