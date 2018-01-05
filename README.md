@@ -426,4 +426,108 @@ let client2 = Client(factory: modernFactory)
 let client3 = Client(factory: artDekoFactory)
 ```
 
+Строитель 
+-------------
+Builder
+-------------
 
+**Строитель** — это порождающий паттерн проектирования, который позволяет создавать сложные объекты пошагово.
+
+![enter image description here](https://refactoring.guru/images/patterns/content/builder/builder-2x.png)
+
+*Классический пример:* 
+```swift
+// #####################
+
+class Product1 {
+    // ...
+}
+
+class Product2 {
+    // ...
+}
+
+// #####################
+
+protocol Builder {
+    func reset()
+    func buildStepA()
+    func buildStepB()
+    func buildStepC()
+}
+
+class Builder1: Builder {
+    private(set) var result = Product1()
+
+    func reset() {
+        // ...
+    }
+
+    func buildStepA() {
+        // ...
+    }
+
+    func buildStepB() {
+        // ...
+    }
+
+    func buildStepC() {
+        // ...
+    }
+}
+
+class Builder2: Builder {
+    private(set) var result = Product2()
+
+    func reset() {
+        // ...
+    }
+
+    func buildStepA() {
+        // ...
+    }
+
+    func buildStepB() {
+        // ...
+    }
+
+    func buildStepC() {
+        // ...
+    }
+}
+
+// #####################
+
+enum Types {
+    case small
+    case big
+}
+
+class Director {
+    private var builder: Builder
+
+    func make(_ type: Types) {
+        switch type {
+        case .small:
+            builder.buildStepA()
+            builder.buildStepB()
+        case .big:
+            builder.buildStepA()
+            builder.buildStepB()
+            builder.buildStepC()
+        }
+    }
+
+    init(builder: Builder) {
+        self.builder = builder
+    }
+}
+
+// #####################
+// Main
+
+let builder = Builder1()
+let director = Director(builder: builder)
+director.make(.big)
+builder.result // big Product1
+```
