@@ -279,3 +279,151 @@ for figure in figures {
     manipulators.last?.getType() // Circle Manipulator, Rectangle Manipulator
 }
 ```
+
+Абстрактная фабрика
+-------------
+Abstract Factory
+-------------
+
+**Абстрактная фабрика** — это порождающий паттерн проектирования, который позволяет создавать семейства связанных объектов, не привязываясь к конкретным классам создаваемых объектов.
+
+![enter image description here](https://refactoring.guru/images/patterns/content/abstract-factory/abstract-factory-2x.png)
+
+*Пример:*
+```swift
+// #####################
+
+protocol Chair {
+    func hasLegs()
+    func sitOn()
+}
+
+class VictorianChair: Chair {
+    func hasLegs() {
+        // ...
+    }
+
+    func sitOn() {
+        // ...
+    }
+}
+
+class ModernChair: Chair {
+    func hasLegs() {
+        // ...
+    }
+
+    func sitOn() {
+        // ...
+    }
+}
+
+class ArtDecoChair: Chair {
+    func hasLegs() {
+        // ...
+    }
+
+    func sitOn() {
+        // ...
+    }
+}
+
+// #####################
+
+protocol Sofa {
+    func hasLegs()
+    func sleepOn()
+}
+
+class VictorianSofa: Sofa {
+    func hasLegs() {
+        // ...
+    }
+
+    func sleepOn() {
+        // ...
+    }
+}
+
+class ModernSofa: Sofa {
+    func hasLegs() {
+        // ...
+    }
+
+    func sleepOn() {
+        // ...
+    }
+}
+
+class ArtDecoSofa: Sofa {
+    func hasLegs() {
+        // ...
+    }
+
+    func sleepOn() {
+        // ...
+    }
+}
+
+// #####################
+
+protocol FurnitureFactory {
+    func createChair() -> Chair
+    func createSofa() -> Sofa
+}
+
+class VictorianFactory: FurnitureFactory {
+    func createChair() -> Chair {
+        return VictorianChair()
+    }
+
+    func createSofa() -> Sofa {
+        return VictorianSofa()
+    }
+}
+
+class ModernFactory: FurnitureFactory {
+    func createChair() -> Chair {
+        return ModernChair()
+    }
+
+    func createSofa() -> Sofa {
+        return ModernSofa()
+    }
+}
+
+class ArtDecoFactory: FurnitureFactory {
+    func createChair() -> Chair {
+        return ArtDecoChair()
+    }
+
+    func createSofa() -> Sofa {
+        return ArtDecoSofa()
+    }
+}
+
+// #####################
+
+class Client {
+    private var chair: Chair
+    private var sofa: Sofa
+
+    init(factory: FurnitureFactory) {
+        chair = factory.createChair()
+        sofa = factory.createSofa()
+    }
+}
+
+// #####################
+// Main
+
+let victorianFactory = VictorianFactory()
+let modernFactory = ModernFactory()
+let artDekoFactory = ArtDecoFactory()
+
+let client1 = Client(factory: victorianFactory)
+let client2 = Client(factory: modernFactory)
+let client3 = Client(factory: artDekoFactory)
+```
+
+
