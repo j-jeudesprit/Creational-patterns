@@ -1,6 +1,6 @@
-# Creational-patterns on Swift
+# Creational patterns on Swift
 
-Порождающие паттерны проектирования
+Порождающие паттерны проектирования на Swift
 ===================
 
 Фабричный метод 
