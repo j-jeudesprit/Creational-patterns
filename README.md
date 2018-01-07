@@ -196,7 +196,7 @@ let client3 = Client(factory: artDekoFactory)
     @objc optional func buildStepA() // это может быть создание бассейна
     @objc optional func buildStepB() // газона
     @objc optional func buildStepC() 
-	// ...
+    // ...
 }
 ```
   
