@@ -270,7 +270,7 @@ class Director {
 // А как он это будет делать, волновать нас не должно.  
 
     func make(_ type: Types) {
-	    if let builder = builder as? Builder1 {
+    	if let builder = builder as? Builder1 {
 	        switch type {
 	        case .small:
 	            builder.buildStepA()
@@ -280,9 +280,9 @@ class Director {
 	            builder.buildStepB()
 	            builder.buildStepC()
 	        }
-	    } else {   
-				// ...  
-		}
+	 } else {   
+		// ...  
+	 }
     }
     
     func anotherMake() { 
@@ -295,7 +295,7 @@ class Director {
 }
 ```
 
-Теперь в самом коде должно выглядеть всё прозрачно. Легко и просто строится любой нужный нам объект.   
+Теперь в самом коде всё должно выглядеть прозрачно. Легко и просто строится любой нужный нам объект.   
   
 ```swift    
 // Main
