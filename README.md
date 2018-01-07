@@ -1,303 +1,45 @@
-# Creational patterns on Swift
-
-Порождающие паттерны проектирования на Swift
-===================
-
-Фабричный метод 
--------------
-Factory Method
--------------
-
-**Фабричный метод** — это порождающий паттерн проектирования, который определяет общий интерфейс для создания объектов в суперклассе, позволяя подклассам изменять тип создаваемых объектов.
-
-![enter image description here](https://refactoring.guru/images/patterns/content/factory-method/factory-method-2x.png)
-
-*Классический пример:* 
-```swift
-// #####################
-
-protocol Transport {
-    func getType()
-}
-
-class Truck: Transport {
-    func getType() {
-        print("Truck")
-    }
-}
-
-class Ship: Transport {
-    func getType() {
-        print("Ship")
-    }
-}
-
-// #####################
-
-protocol Logistics {
-    // Фабричный метод
-    func createTransport() -> Transport
-
-    // Остальная функциональщина ...
-}
-
-class RoadLogistics: Logistics {
-    func createTransport() -> Transport {
-        return Truck()
-    }
-}
-
-class SeaLogistics: Logistics {
-    func createTransport() -> Transport {
-        return Ship()
-    }
-}
-
-// #####################
-// Main
-
-var logistics: [Logistics] = [
-    RoadLogistics(),
-    SeaLogistics(),
-]
-
-var transports = [Transport]()
-for logistic in logistics {
-    transports.append(logistic.createTransport())
-    transports.last?.getType() // Truck, Ship
-}
-```
-
-*Параметризованные фабричные методы*: 
-```swift
-// #####################
-
-protocol Transport {
-    func getType()
-}
-
-class Truck: Transport {
-    func getType() {
-        print("Truck")
-    }
-}
-
-class Ship: Transport {
-    func getType() {
-        print("Ship")
-    }
-}
-
-enum Types {
-    case truck
-    case ship
-}
-
-// #####################
-
-protocol Logistics {
-    // Параметризированный фабричный метод
-    func createTransport(_ type: Types) -> Transport
-
-    // Остальная функциональщина ...
-}
-
-class TransportLogistics: Logistics {
-    func createTransport(_ type: Types) -> Transport {
-        switch type {
-        case .truck: return Truck()
-        case .ship: return Ship()
-        }
-    }
-}
-
-
-// #####################
-// Main
-
-var logistics: [Logistics] = [
-    TransportLogistics(),
-    TransportLogistics(),
-]
-
-var transports = [Transport]()
-transports.append(logistics[0].createTransport(.truck))
-transports.append(logistics[1].createTransport(.ship))
-transports[0].getType() // Truck
-transports[1].getType() // Ship
-```
-
-*Использование шаблонов, чтобы не порождать подклассы*:
-```swift
-// #####################
-
-protocol Transport {
-    func getType()
-}
-
-// #####################
-class Truck: Transport {
-    func getType() {
-        print("Truck")
-    }
-}
-
-class Ship: Transport {
-    func getType() {
-        print("Ship")
-    }
-}
-
-// #####################
-
-protocol Logistics {
-    // фабричный метод
-    func createTransport() -> Transport?
-
-    // Остальная функциональщина ...
-}
-
-// #####################
-
-func ~= (lhs: Transport.Type, rhs: Transport.Type) -> Bool {
-    return lhs == rhs ? true : false
-}
-
-// #####################
-
-class TransportLogistics<Item: Transport>: Logistics {
-    func createTransport() -> Transport? {
-        switch Item.self {
-        case Ship.self: return Ship()
-        case Truck.self: return Truck()
-        default: return nil
-        }
-    }
-}
-
-// #####################
-// Main
-
-var logistics: [Logistics] = [
-    TransportLogistics<Truck>(),
-    TransportLogistics<Ship>(),
-]
-
-var transports = [Transport]()
-for logistic in logistics {
-    transports.append(logistic.createTransport()!)
-    transports.last?.getType() // Truck, Ship
-}
-```
-
-*Клиенты тоже могут применять фабричные методы в обход создания отдельных фабрик, особенно при наличии параллельных иерархий классов*:
-```swift
-// #####################
-
-protocol Manipulator {
-    func move()
-    func drag()
-    func click()
-
-    func getType()
-}
-
-protocol Figure {
-    // Фабричный метод
-    func createManipulator() -> Manipulator
-
-     // Остальная функциональщина ...
-}
-
-// #####################
-
-class CircleManipulator: Manipulator {
-    func move() {
-        // ...
-    }
-
-    func drag() {
-        // ...
-    }
-
-    func click() {
-        // ...
-    }
-
-    func getType() {
-        print("Circle Manipulator")
-    }
-}
-
-class Circle: Figure {
-    func createManipulator() -> Manipulator {
-        return CircleManipulator()
-    }
-
-    // Остальная функциональщина ...
-}
-
-class RectangleManipulator: Manipulator {
-    func move() {
-        // ...
-    }
-
-    func drag() {
-        // ...
-    }
-
-    func click() {
-        // ...
-    }
-
-    func getType() {
-        print("Rectangle Manipulator")
-    }
-}
-
-class Rectangle: Figure {
-    func createManipulator() -> Manipulator {
-        return RectangleManipulator()
-    }
-
-    // Остальная функциональщина ...
-}
-
-// #####################
-// Main
-
-var figures: [Figure] = [
-    Circle(),
-    Rectangle(),
-]
-
-var manipulators = [Manipulator]()
-for figure in figures {
-    manipulators.append(figure.createManipulator())
-    manipulators.last?.click()
-    manipulators.last?.drag()
-    manipulators.last?.getType() // Circle Manipulator, Rectangle Manipulator
-}
-```
-
-Абстрактная фабрика
--------------
-Abstract Factory
--------------
-
-**Абстрактная фабрика** — это порождающий паттерн проектирования, который позволяет создавать семейства связанных объектов, не привязываясь к конкретным классам создаваемых объектов.
-
-![enter image description here](https://refactoring.guru/images/patterns/content/abstract-factory/abstract-factory-2x.png)
-
-*Пример:*
-```swift
-// #####################
-
+![](https://i.imgur.com/lrcE00f.png)  
+
+***    
+**Ссылки на конкретный паттерн**:  
+
+ * [Abstract Factory](#abstract-factory)
+ * [Builder](#builder)  
+ * [Factory Method](#factory-method)
+ * [Prototype](#prototype)
+ * [Singleton](#singleton)      
+
+***
+[Abstract Factory](#abstract-factory)  
+--------------      
+![](https://refactoring.guru/images/patterns/content/abstract-factory/abstract-factory-2x.png)   
+  
+**Абстрактная фабрика** — это порождающий паттерн проектирования, который предоставляет интерфейс для создания семейства взаимосвязанных объектов.   
+  
+Представьте, что у Вас есть семейство объектов, скажем  
+{кресло, диван и журнальный столик} или даже один объект в семействе, которая в последствии может расшириться. Проблема расширения семейства решается достаточно просто, путём введения некоего интерфейса, который бы описывал объекты Вашего семейства(подумали Вы). Таким образом в коде Вы будете работать с интерфейсом, а не с конкретным типом. Но один интерфейс полностью не избавит от проблем, остаётся проблема создания самого объекта. Ведь мы бы не хотели лезть в код и добавлять инициализацию новых классов семейства в тех местах, где она необходима. Что бы решить уже эту проблему(проблему инстанцирования), мы воспользуемся такой практикой, которая называется **Фабрикой** и о которой поговорим чуть позже.     
+  
+Создадим указанные протоколы для каждого объекта нашего семейства:
+  
+```swift  
 protocol Chair {
     func hasLegs()
     func sitOn()
 }
 
+protocol Sofa {
+    func hasLegs()
+    func sleepOn()
+}  
+  
+//...
+```
+  
+Теперь давайте подумаем о реализации этих протоколов. Возьмём протокол <i>Chair</i> и подумаем, какие могут быть реализации этого протокола? Кресло может быть сделано из различных материалов, иметь разную форму и т.п. Для наших примеров мы рассмотрим стили в которых можно делать мебель. Это будут ар-деко, модерн и викторианский стили. Эти стили будут применяться ко всему семейству, ведь мы изначально работаем с семейством объектов. 
+
+Реализуем их:  
+  
+```swift
 class VictorianChair: Chair {
     func hasLegs() {
         // ...
@@ -329,11 +71,6 @@ class ArtDecoChair: Chair {
 }
 
 // #####################
-
-protocol Sofa {
-    func hasLegs()
-    func sleepOn()
-}
 
 class VictorianSofa: Sofa {
     func hasLegs() {
@@ -367,11 +104,25 @@ class ArtDecoSofa: Sofa {
 
 // #####################
 
+// ...
+```
+
+В нашем коде мы работаем исключительно с интерфейсами, что позволит нам с лёгкость добавлять различные реализации соответствующих протоколов(добавлять новые стили) и так же просто добавлять новые объекты в семейство(добавить скажем, шкаф).   
+  
+Но основная проблема теперь не в добавлении объектов и их реализаций, а в том, как нам правильно создавать семейства объектов одного стиля(ведь никто не хочет получить диван и кресло в викторианском стиле, а журнальный столик в стиле ар-деко). Создавать так, что бы в коде ничего не пришлось менять. Вот тут та к нам на помощь и приходит паттерн **Абстрактная фабрика**.   
+  
+**Абстрактная фабрика** - паттерн позволяющий решить проблему инстанцирования семейства объектов в нужной реализации. Для этого создадим интерфейс абстрактной фабрики: 
+
+```swift
 protocol FurnitureFactory {
     func createChair() -> Chair
     func createSofa() -> Sofa
 }
+```
+  
+Этот интерфейс определяет методы, которые создают семейство наших объектов. Т.к у нас всё построено на  интерфейсах, то и возвращаем мы не конкретную реализацию, скажем *VictorianChair*, а *Chair*. Теперь создадим соответствующие реализации данного интерфейса. Т.к. стилей у нас ровно три, то и таких реализации будет тоже три. Посмотрим на них:  
 
+```swift
 class VictorianFactory: FurnitureFactory {
     func createChair() -> Chair {
         return VictorianChair()
@@ -401,20 +152,22 @@ class ArtDecoFactory: FurnitureFactory {
         return ArtDecoSofa()
     }
 }
+```
 
-// #####################
+Теперь мы имеем три фабрики, каждая из которых создаёт семейство объектов в нужном стиле.  Осталось показать, как с этим работать в самом коде:
 
+```swift  
 class Client {
     private var chair: Chair
     private var sofa: Sofa
+    //...    
 
     init(factory: FurnitureFactory) {
         chair = factory.createChair()
         sofa = factory.createSofa()
     }
-}
+}  
 
-// #####################
 // Main
 
 let victorianFactory = VictorianFactory()
@@ -426,199 +179,4 @@ let client2 = Client(factory: modernFactory)
 let client3 = Client(factory: artDekoFactory)
 ```
 
-Строитель 
--------------
-Builder
--------------
-
-**Строитель** — это порождающий паттерн проектирования, который позволяет создавать сложные объекты пошагово.
-
-![enter image description here](https://refactoring.guru/images/patterns/content/builder/builder-2x.png)
-
-*Классический пример:* 
-```swift
-// #####################
-
-class Product1 {
-    // ...
-}
-
-class Product2 {
-    // ...
-}
-
-// #####################
-
-protocol Builder {
-    func reset()
-    func buildStepA()
-    func buildStepB()
-    func buildStepC()
-}
-
-class Builder1: Builder {
-    private(set) var result = Product1()
-
-    func reset() {
-        // ...
-    }
-
-    func buildStepA() {
-        // ...
-    }
-
-    func buildStepB() {
-        // ...
-    }
-
-    func buildStepC() {
-        // ...
-    }
-}
-
-class Builder2: Builder {
-    private(set) var result = Product2()
-
-    func reset() {
-        // ...
-    }
-
-    func buildStepA() {
-        // ...
-    }
-
-    func buildStepB() {
-        // ...
-    }
-
-    func buildStepC() {
-        // ...
-    }
-}
-
-// #####################
-
-enum Types {
-    case small
-    case big
-}
-
-class Director {
-    private var builder: Builder
-
-    func make(_ type: Types) {
-        switch type {
-        case .small:
-            builder.buildStepA()
-            builder.buildStepB()
-        case .big:
-            builder.buildStepA()
-            builder.buildStepB()
-            builder.buildStepC()
-        }
-    }
-
-    init(builder: Builder) {
-        self.builder = builder
-    }
-}
-
-// #####################
-// Main
-
-let builder = Builder1()
-let director = Director(builder: builder)
-director.make(.big)
-builder.result // big Product1
-```
-
-Прототип
--------------
-Prototype
--------------
-
-**Прототип** — это порождающий паттерн проектирования, который позволяет копировать объекты, не вдаваясь в подробности их реализации.
-
-![enter image description here](https://refactoring.guru/images/patterns/content/prototype/prototype-2x.png)
-
-*Пример:* 
-```swift
-// #####################
-
-protocol Clonable {
-    func clone() -> Self
-}
-
-// #####################
-
-class Prototype: Clonable {
-    var smth1: String = "Hello, "
-
-    init() { }
-
-    required init(prototype: Prototype) {
-        smth1 = prototype.smth1
-    }
-
-    func clone() -> Self {
-        return type(of: self).init(prototype: self)
-    }
-
-    // ...
-}
-
-class SubPrototype: Prototype {
-    var smth2: String = "World!"
-
-    override init() {
-        super.init()
-    }
-
-    required init(prototype: Prototype) {
-        fatalError("\(#function) has not been implemented")
-    }
-
-    required init(subprototype: SubPrototype) {
-        smth2 = subprototype.smth2
-        super.init(prototype: subprototype)
-    }
-
-    override func clone() -> Self {
-        return type(of: self).init(subprototype: self)
-    }
-
-    // ...
-}
-
-// #####################
-// Main
-
-let proto = Prototype()
-let clone1 = proto.clone()
-clone1.smth1 // Hello,
-
-let subproto = SubPrototype()
-let clone2 = subproto.clone()
-clone2.smth1 // Hello,
-clone2.smth2 // World!
-```
-
-Одиночка
--------------
-Singleton
--------------
-
-**Одиночка** — это порождающий паттерн проектирования, который гарантирует, что у класса есть только один экземпляр, и предоставляет к нему глобальную точку доступа.
-
-![enter image description here](https://refactoring.guru/images/patterns/content/singleton/singleton-2x.png)
-
-*Пример:*
-```swift
-// #####################
-
-class Singleton {
-    static let shared = Singleton()
-
-    private init() { }
-}
-```
+Как видно, всё выглядит прозрачно. Не важно, какой стиль мы передаём и какие у нас объекты в системе. Для всех случаев нам не придётся изменять код, который работает с нашим семейством. Ведь вместо самих объектов используются интерфейсы, а вместо конкретной фабрики - абстрактная.  
