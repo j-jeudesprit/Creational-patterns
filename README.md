@@ -386,3 +386,78 @@ for logistic in logistics {
     transports.last?.stop()
 }
 ```
+
+***
+[Prototype](#prototype)  
+--------------      
+![](https://refactoring.guru/images/patterns/content/prototype/prototype-2x.png)   
+  
+**Прототип** — это порождающий паттерн проектирования, позволяющий с помощью экземпляра-прототипа создавать новый объект путём клонирования.  
+  
+Иногда, вместо того что бы инстанцировать новый объект и долго его настраивать, лучшем вариантом будет просто получить его копию. Такую необходимость и решат паттерн **Прототип**.   
+  
+**Прототип** создаёт интерфейс, в котором обычно есть лишь один метод, метод который возвращает копию  экземпляра. Этот паттерн легок для понимания, но при этом реализация метода интерфейса иногда представляет огромную сложность. Сама реализация выходит за рамки этого материала, но небольшой пример я покажу. И так давайте определим этот интерфейс:  
+  
+```swit
+protocol Clonable {
+    func clone() -> Self
+    
+    // ...
+}
+```   
+
+Реализуя этот интерфейс, можно получить копию объекта путём вызова данного метода. Покажу небольшой пример(хотя для этих целей в Foundation есть NSCopying): 
+  
+```swift
+class Prototype: Clonable {
+    var smth1: String = "Hello, "
+
+    init() { }
+
+    required init(prototype: Prototype) {
+        smth1 = prototype.smth1
+    }
+
+    func clone() -> Self {
+        return type(of: self).init(prototype: self)
+    }
+
+    // ...
+}
+
+class SubPrototype: Prototype {
+    var smth2: String = "World!"
+
+    override init() {
+        super.init()
+    }
+
+    required init(prototype: Prototype) { }
+
+    required init(subprototype: SubPrototype) {
+        smth2 = subprototype.smth2
+        super.init(prototype: subprototype)
+    }
+
+    override func clone() -> Self {
+        return type(of: self).init(subprototype: self)
+    }
+
+    // ...
+}
+``` 
+
+Ну и в основном коде вызов этого метода возвратит нам нужную копию:  
+  
+```swift
+// Main
+
+let proto = Prototype()
+let clone1 = proto.clone()
+clone1.smth1 // Hello,
+
+let subproto = SubPrototype()
+let clone2 = subproto.clone()
+clone2.smth1 // Hello,
+clone2.smth2 // World!
+```
