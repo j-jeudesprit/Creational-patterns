@@ -1,4 +1,4 @@
-![](https://i.imgur.com/lrcE00f.png)  
+![](https://i.imgur.com/0tXbVpW.png)  
 
 ***    
 **Ссылки на конкретный паттерн**:  
