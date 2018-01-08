@@ -263,31 +263,31 @@ enum Types {
 class Director {
     private var builder: Builder
 
-// Логика тут может быть совершенна разная.  
-// Мы можем проверять, какой билдер мы получили.  
-// Можем проверять какой-то параметр, который можно передать Директору.
-// В целом Директор должен уметь строить абсолютно любой дом, который мы у него попросим.
-// А как он это будет делать, волновать нас не должно.  
+    // Логика тут может быть совершенна разная.
+    // Мы можем проверять, какой билдер мы получили.
+    // Можем проверять какой-то параметр, который можно передать Директору.
+    // В целом Директор должен уметь строить абсолютно любой дом, который мы у него попросим.
+    // А как он это будет делать, волновать нас не должно.
 
     func make(_ type: Types) {
-    	if let builder = builder as? Builder1 {
-	        switch type {
-	        case .small:
-	            builder.buildStepA()
-	            builder.buildStepB()
-	        case .big:
-	            builder.buildStepA()
-	            builder.buildStepB()
-	            builder.buildStepC()
-	        }
-	 } else {   
-		// ...  
-	 }
+        if let builder = builder as? Builder1 {
+            switch type {
+            case .small:
+                builder.buildStepA()
+                builder.buildStepB()
+            case .big:
+                builder.buildStepA()
+                builder.buildStepB()
+                builder.buildStepC()
+            }
+        } else {
+            // ...
+        }
     }
-    
-    func anotherMake() { 
-	    // ...   
-    }  
+
+    func anotherMake() {
+        // ...
+    }
 
     init(builder: Builder) {
         self.builder = builder
